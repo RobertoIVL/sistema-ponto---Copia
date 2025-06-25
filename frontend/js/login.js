@@ -51,6 +51,10 @@ function fazerLogout() {
 function mostrarLogin() {
     document.getElementById('login-container').style.display = 'block';
     document.getElementById('dashboard').style.display = 'none';
+    // Sempre esconder o link do admin e nome do usuário ao voltar para login
+    document.getElementById('btn-logout').style.display = 'none';
+    document.getElementById('usuario-nome').textContent = '';
+    document.getElementById('admin-link').style.display = 'none';
 }
 
 function mostrarDashboard() {
@@ -61,9 +65,11 @@ function mostrarDashboard() {
     document.getElementById('usuario-nome').textContent = usuario.nome || 'Usuário';
     
     // Show admin link if user is admin
-    if (usuario.cargo && usuario.cargo.includes('Admin')) {
-        document.getElementById('admin-link').style.display = 'inline';
-    }
+if (usuario.cargo && usuario.cargo.toLowerCase().includes('admin')) {
+    document.getElementById('admin-link').style.display = 'inline';
+} else {
+    document.getElementById('admin-link').style.display = 'none';
+}
     
     iniciarDashboard();
 }
