@@ -1,0 +1,106 @@
+const db = require('../database/database');
+
+class RegistroPonto {
+  static async registrarPonto(usuarioId, tipo, horario) {
+    const hoje = new Date().toISOString().split('T')[0];
+    
+    return new Promise((resolve, reject) => {
+      // Verificar se já existe registro para hoje
+      db.get('SELECT * FROM registros_ponto WHERE usuario_id = ? AND data = ?', 
+        [usuarioId, hoje], (err, registro) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          if (!registro) {
+            // Criar novo registro
+            const sql = `INSERT INTO registros_ponto (usuario_id, data, ${tipo}) VALUES (?, ?, ?)`;
+            db.run(sql, [usuarioId, hoje, horario], function(err) {
+              if (err) reject(err);
+              else resolve({ id: this.lastID, tipo, horario });
+            });
+          } else {
+            // Atualizar registro existente
+            const sql = `UPDATE registros_ponto SET ${tipo} = ? WHERE usuario_id = ? AND data = ?`;
+            db.run(sql, [horario, usuarioId, hoje], (err) => {
+              if (err) reject(err);
+              else {
+                // Calcular horas trabalhadas se necessário
+                this.calcularHoras(usuarioId, hoje);
+                resolve({ tipo, horario });
+              }
+            });
+          }
+        });
+    });
+  }
+
+  static async calcularHoras(usuarioId, data) {
+    return new Promise((resolve, reject) => {
+      db.get('SELECT * FROM registros_ponto WHERE usuario_id = ? AND data = ?', 
+        [usuarioId, data], (err, registro) => {
+          if (err || !registro) {
+            reject(err);
+            return;
+          }
+
+          let horasTrabalhadas = 0;
+          let horasExtras = 0;
+
+          if (registro.entrada && registro.saida) {
+            const entrada = new Date(`${data}T${registro.entrada}`);
+            const saida = new Date(`${data}T${registro.saida}`);
+            
+            let totalMinutos = (saida - entrada) / (1000 * 60);
+
+            // Subtrair tempo de almoço se houver
+            if (registro.saida_almoco && registro.volta_almoco) {
+              const saidaAlmoco = new Date(`${data}T${registro.saida_almoco}`);
+              const voltaAlmoco = new Date(`${data}T${registro.volta_almoco}`);
+              const minutosAlmoco = (voltaAlmoco - saidaAlmoco) / (1000 * 60);
+              totalMinutos -= minutosAlmoco;
+            }
+
+            horasTrabalhadas = totalMinutos / 60;
+
+            // Calcular horas extras (considerando jornada de 8h)
+            if (horasTrabalhadas > 8) {
+              horasExtras = horasTrabalhadas - 8;
+            }
+
+            // Atualizar no banco
+            db.run('UPDATE registros_ponto SET horas_trabalhadas = ?, horas_extras = ? WHERE usuario_id = ? AND data = ?',
+              [horasTrabalhadas, horasExtras, usuarioId, data], (err) => {
+                if (err) reject(err);
+                else resolve({ horasTrabalhadas, horasExtras });
+              });
+          }
+        });
+    });
+  }
+
+  static async obterRegistrosDia(usuarioId, data) {
+    return new Promise((resolve, reject) => {
+      db.get('SELECT * FROM registros_ponto WHERE usuario_id = ? AND data = ?', 
+        [usuarioId, data], (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        });
+    });
+  }
+
+  static async obterRegistrosPeriodo(usuarioId, dataInicio, dataFim) {
+    return new Promise((resolve, reject) => {
+      db.all(`SELECT * FROM registros_ponto 
+              WHERE usuario_id = ? AND data BETWEEN ? AND ? 
+              ORDER BY data DESC`, 
+        [usuarioId, dataInicio, dataFim], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        });
+    });
+  }
+}
+
+module.exports = RegistroPonto;

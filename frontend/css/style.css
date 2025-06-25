@@ -1,0 +1,274 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    color: #333;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#usuario-nome {
+    font-weight: bold;
+    color: #555;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#btn-logout {
+    background: #dc3545;
+    color: white;
+}
+
+#btn-logout:hover {
+    background: #c82333;
+}
+
+#admin-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#admin-link:hover {
+    background: #218838;
+}
+
+/* Login */
+.login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+#form-login {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+#form-login button {
+    background: #667eea;
+    color: white;
+    padding: 0.75rem;
+}
+
+#form-login button:hover {
+    background: #5a67d8;
+}
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.ponto-container, .relatorios {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.hora-atual {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#hora-atual {
+    font-size: 3rem;
+    color: #333;
+    font-weight: bold;
+}
+
+#data-atual {
+    color: #666;
+    font-size: 1.2rem;
+}
+
+.botoes-ponto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.btn-ponto {
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-ponto.entrada {
+    background: #28a745;
+    color: white;
+}
+
+.btn-ponto.entrada:hover {
+    background: #218838;
+}
+
+.btn-ponto.saida-almoco {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-ponto.saida-almoco:hover {
+    background: #e0a800;
+}
+
+.btn-ponto.volta-almoco {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-ponto.volta-almoco:hover {
+    background: #138496;
+}
+
+.btn-ponto.saida {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-ponto.saida:hover {
+    background: #c82333;
+}
+
+.registros-hoje {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.registros-hoje h3 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.registro-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.filtros {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filtros input, .filtros button {
+    flex: 1;
+}
+
+.filtros button {
+    background: #667eea;
+    color: white;
+}
+
+.filtros button:hover {
+    background: #5a67d8;
+}
+
+/* Tabela de relatórios */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #f8f9fa;
+    font-weight: bold;
+}
+
+tr:hover {
+    background: #f5f5f5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .botoes-ponto {
+        grid-template-columns: 1fr;
+    }
+    
+    .filtros {
+        flex-direction: column;
+    }
+}

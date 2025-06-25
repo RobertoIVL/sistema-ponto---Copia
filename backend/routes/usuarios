@@ -1,0 +1,47 @@
+const express = require('express');
+const Usuario = require('../models/Usuario');
+const { verificarToken } = require('../middleware/auth');
+
+const router = express.Router();
+
+// Criar usuário
+router.post('/', verificarToken, async (req, res) => {
+  try {
+    const usuario = await Usuario.criar(req.body);
+    res.status(201).json(usuario);
+  } catch (error) {
+    res.status(400).json({ erro: 'Erro ao criar usuário' });
+  }
+});
+
+// Listar usuários
+router.get('/', verificarToken, async (req, res) => {
+  try {
+    const usuarios = await Usuario.listarTodos();
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar usuários' });
+  }
+});
+
+// Atualizar usuário
+router.put('/:id', verificarToken, async (req, res) => {
+  try {
+    const usuario = await Usuario.atualizar(req.params.id, req.body);
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ erro: 'Erro ao atualizar usuário' });
+  }
+});
+
+// Deletar usuário
+router.delete('/:id', verificarToken, async (req, res) => {
+  try {
+    await Usuario.deletar(req.params.id);
+    res.json({ message: 'Usuário deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao deletar usuário' });
+  }
+});
+
+module.exports = router;

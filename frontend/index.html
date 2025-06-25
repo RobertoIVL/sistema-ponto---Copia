@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Ponto</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema de Registro de Ponto</h1>
+            <nav>
+                <span id="usuario-nome"></span>
+                <button id="btn-logout">Sair</button>
+                <a id="admin-link" href="admin_dashboard.html" style="display: none;">Painel Administrativo</a>
+            </nav>
+        </header>
+
+        <main id="main-content">
+            <div class="login-container" id="login-container">
+                <h2>Login</h2>
+                <form id="form-login">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="senha" placeholder="Senha" required>
+                    <button type="submit">Entrar</button>
+                </form>
+            </div>
+
+            <div class="dashboard" id="dashboard" style="display: none;">
+                <div class="ponto-container">
+                    <div class="hora-atual">
+                        <h2 id="hora-atual">--:--:--</h2>
+                        <p id="data-atual"></p>
+                    </div>
+
+                    <div class="botoes-ponto">
+                        <button class="btn-ponto entrada" onclick="registrarPonto('entrada')">
+                            Entrada
+                        </button>
+                        <button class="btn-ponto saida-almoco" onclick="registrarPonto('saida_almoco')">
+                            Saída Almoço
+                        </button>
+                        <button class="btn-ponto volta-almoco" onclick="registrarPonto('volta_almoco')">
+                            Volta Almoço
+                        </button>
+                        <button class="btn-ponto saida" onclick="registrarPonto('saida')">
+                            Saída
+                        </button>
+                    </div>
+
+                    <div class="registros-hoje">
+                        <h3>Registros de Hoje</h3>
+                        <div id="registros-hoje-lista">
+                            <!-- Registros serão carregados aqui -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relatorios">
+                    <h3>Relatórios</h3>
+                    <div class="filtros">
+                        <input type="date" id="data-inicio">
+                        <input type="date" id="data-fim">
+                        <button onclick="carregarRelatorio()">Buscar</button>
+                    </div>
+                    <div id="tabela-relatorio"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
