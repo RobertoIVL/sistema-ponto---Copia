@@ -144,12 +144,13 @@ async function addUser() {
         return;
     }
 
-    if (!validateCPF(cpf)) {
+    const cpfLimpo = cpf.replace(/\D/g, '');
+    if (cpfLimpo.length !== 11) {
         mostrarNotificacao('Por favor, insira um CPF válido.', 'warning');
         return;
     }
 
-    const novoUsuario = { nome, email, cpf, cargo, departamento, senha };
+    const novoUsuario = { nome, email, cpf: cpfLimpo, cargo, departamento, senha };
 
     try {
         const response = await fetchAuth(`${API_BASE}/usuarios`, {
@@ -590,7 +591,8 @@ function validateEmail(email) {
 }
 
 function validateCPF(cpf) {
-    return /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(cpf);
+    cpf = cpf.replace(/\D/g, ''); // Remove tudo que não for número
+    return cpf.length === 11;
 }
 
 function formatDate(dateStr) {
@@ -685,7 +687,7 @@ async function deleteSchedule(scheduleId) {
 
 // Máscara para CPF
 document.getElementById('userCPF').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
+    let value = e.target.value.replace(/\D/g, '').slice(0, 11);
     value = value.replace(/(\d{3})(\d)/, '$1.$2');
     value = value.replace(/(\d{3})(\d)/, '$1.$2');
     value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');

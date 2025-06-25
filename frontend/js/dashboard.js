@@ -28,7 +28,7 @@ function mostrarConfirmacaoPonto(mensagem, callback) {
     const confirmBox = document.getElementById('confirmacao-ponto');
     const btnConfirmar = document.getElementById('btn-confirmar');
     const btnCancelar = document.getElementById('btn-cancelar');
-    document.getElementById('confirmacao-mensagem').textContent = mensagem;
+    document.getElementById('confirmacao-mensagem').innerHTML = mensagem; // <--- Troque textContent por innerHTML
     confirmBox.style.display = 'flex';
 
     let segundos = 3;
@@ -60,11 +60,11 @@ function mostrarConfirmacaoPonto(mensagem, callback) {
         callback(false);
     };
 }
-async function registrarPonto(tipo) {
+async function registrarPonto(tipo, forcar = false) {
     try {
         const response = await fetchAuth(`${API_BASE}/pontos/registrar`, {
             method: 'POST',
-            body: JSON.stringify({ tipo })
+            body: JSON.stringify({ tipo, forcar })
         });
 
         const data = await response.json();
@@ -73,9 +73,14 @@ async function registrarPonto(tipo) {
             mostrarNotificacao(`${tipo.replace('_', ' ').toUpperCase()} registrada com sucesso!`, 'success');
             carregarRegistrosHoje();
         } else {
-            // Mostra a mensagem de erro personalizada do backend
             if (data.erro && data.erro.startsWith('Já há um registro para')) {
-                mostrarConfirmacaoPonto(data.erro, () => {});
+                // Destaca o campo em negrito
+                const mensagem = data.erro.replace(/para ([A-ZÇÃ ]+) neste dia,/, (m, campo) => `para <strong>${campo}</strong> neste dia,`);
+                mostrarConfirmacaoPonto(mensagem, (confirmado) => {
+                    if (confirmado) {
+                        registrarPonto(tipo, true); // Tenta sobrescrever
+                    }
+                });
             } else {
                 mostrarNotificacao(data.erro || 'Erro ao registrar ponto', 'error');
             }

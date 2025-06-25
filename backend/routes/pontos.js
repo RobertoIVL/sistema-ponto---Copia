@@ -7,22 +7,23 @@ const router = express.Router();
 // Registrar ponto
 router.post('/registrar', verificarToken, async (req, res) => {
   try {
-    const { tipo } = req.body;
+    const { tipo, forcar } = req.body;
     const horario = new Date().toLocaleTimeString('pt-BR', { hour12: false });
 
-    const registro = await RegistroPonto.registrarPonto(req.usuario.id, tipo, horario);
+    const registro = await RegistroPonto.registrarPonto(req.usuario.id, tipo, horario, !!forcar);
     res.json(registro);
   } catch (error) {
     if (error && error.jaRegistrado && error.campo) {
       let campo = '';
       switch (error.campo) {
-        case 'entrada': campo = 'Entrada'; break;
-        case 'saida_almoco': campo = 'Saída Almoço'; break;
-        case 'volta_almoco': campo = 'Volta Almoço'; break;
-        case 'saida': campo = 'Saída'; break;
-        default: campo = error.campo;
+        case 'entrada': campo = 'ENTRADA'; break;
+        case 'saida_almoco': campo = 'SAÍDA ALMOÇO'; break;
+        case 'volta_almoco': campo = 'VOLTA ALMOÇO'; break;
+        case 'saida': campo = 'SAÍDA'; break;
+        default: campo = error.campo.toUpperCase();
       }
-      res.status(400).json({ erro: `Já há um registro para ${campo} neste dia.` });
+      let horario = error.horario || '';
+      res.status(400).json({ erro: `Já há um registro para ${campo} neste dia, às ${horario}` });
     } else if (error && error.jaRegistrado) {
       res.status(400).json({ erro: 'Todos os registros já foram preenchidos para hoje.' });
     } else {

@@ -63,8 +63,10 @@ function mostrarDashboard() {
     
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     document.getElementById('usuario-nome').textContent = usuario.nome || 'Usuário';
+    // Mostrar botão Sair ao logar
+    document.getElementById('btn-logout').style.display = 'inline';
     
-    // Show admin link if user is admin
+    // Mostrar Painel Administrativo se o usuario for admin
 if (usuario.cargo && usuario.cargo.toLowerCase().includes('admin')) {
     document.getElementById('admin-link').style.display = 'inline';
 } else {

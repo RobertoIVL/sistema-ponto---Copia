@@ -1,7 +1,7 @@
 const db = require('../database/database');
 
 class RegistroPonto {
-  static async registrarPonto(usuarioId, tipo, horario) {
+  static async registrarPonto(usuarioId, tipo, horario, forcar = false) {
     const hoje = new Date().toISOString().split('T')[0];
 
     return new Promise((resolve, reject) => {
@@ -13,8 +13,8 @@ class RegistroPonto {
           }
 
           // NOVO: Verifica se todos os campos já estão preenchidos
-          if (registro && registro[tipo]) {
-            reject({ jaRegistrado: true, campo: tipo });
+          if (registro && registro[tipo] && !forcar) {
+            reject({ jaRegistrado: true, campo: tipo, horario: registro[tipo] });
             return;
           }
 
@@ -26,13 +26,13 @@ class RegistroPonto {
               else resolve({ id: this.lastID, tipo, horario });
             });
           } else {
-            // Atualizar registro existente
+            // Atualizar registro existente (agora permite sobrescrever)
             const sql = `UPDATE registros_ponto SET ${tipo} = ? WHERE usuario_id = ? AND data = ?`;
             db.run(sql, [horario, usuarioId, hoje], (err) => {
               if (err) reject(err);
               else {
                 // Calcular horas trabalhadas se necessário
-                this.calcularHoras(usuarioId, hoje);
+                RegistroPonto.calcularHoras(usuarioId, hoje);
                 resolve({ tipo, horario });
               }
             });
