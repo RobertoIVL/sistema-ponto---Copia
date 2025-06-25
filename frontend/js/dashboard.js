@@ -24,6 +24,42 @@ function atualizarHoraAtual() {
     document.getElementById('data-atual').textContent = data;
 }
 
+function mostrarConfirmacaoPonto(mensagem, callback) {
+    const confirmBox = document.getElementById('confirmacao-ponto');
+    const btnConfirmar = document.getElementById('btn-confirmar');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    document.getElementById('confirmacao-mensagem').textContent = mensagem;
+    confirmBox.style.display = 'flex';
+
+    let segundos = 3;
+    btnConfirmar.disabled = true;
+    btnConfirmar.textContent = `Confirmar (${segundos})`;
+
+    const interval = setInterval(() => {
+        segundos--;
+        if (segundos > 0) {
+            btnConfirmar.textContent = `Confirmar (${segundos})`;
+        } else {
+            btnConfirmar.textContent = 'Confirmar';
+            btnConfirmar.disabled = false;
+            clearInterval(interval);
+        }
+    }, 1000);
+
+    // Limpa eventos anteriores
+    btnConfirmar.onclick = () => {
+        confirmBox.style.display = 'none';
+        clearInterval(interval);
+        btnConfirmar.textContent = 'Confirmar';
+        callback(true);
+    };
+    btnCancelar.onclick = () => {
+        confirmBox.style.display = 'none';
+        clearInterval(interval);
+        btnConfirmar.textContent = 'Confirmar';
+        callback(false);
+    };
+}
 async function registrarPonto(tipo) {
     try {
         const response = await fetchAuth(`${API_BASE}/pontos/registrar`, {
@@ -37,7 +73,12 @@ async function registrarPonto(tipo) {
             mostrarNotificacao(`${tipo.replace('_', ' ').toUpperCase()} registrada com sucesso!`, 'success');
             carregarRegistrosHoje();
         } else {
-            mostrarNotificacao(data.erro || 'Erro ao registrar ponto', 'error');
+            // Mostra a mensagem de erro personalizada do backend
+            if (data.erro && data.erro.startsWith('Já há um registro para')) {
+                mostrarConfirmacaoPonto(data.erro, () => {});
+            } else {
+                mostrarNotificacao(data.erro || 'Erro ao registrar ponto', 'error');
+            }
         }
     } catch (error) {
         mostrarNotificacao('Erro de conexão', 'error');
@@ -174,3 +215,21 @@ async function carregarRelatorio() {
         mostrarNotificação('Erro ao carregar relatório', 'error');
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-ponto').forEach(btn => {
+        btn.onclick = function() {
+            let tipo = '';
+            if (btn.classList.contains('entrada')) tipo = 'entrada';
+            else if (btn.classList.contains('saida-almoco')) tipo = 'saida_almoco';
+            else if (btn.classList.contains('volta-almoco')) tipo = 'volta_almoco';
+            else if (btn.classList.contains('saida')) tipo = 'saida';
+
+            mostrarConfirmacaoPonto('Deseja confirmar o registro de ponto?', (confirmado) => {
+                if (confirmado) {
+                    registrarPonto(tipo);
+                }
+            });
+        };
+    });
+});

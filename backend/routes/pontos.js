@@ -9,11 +9,25 @@ router.post('/registrar', verificarToken, async (req, res) => {
   try {
     const { tipo } = req.body;
     const horario = new Date().toLocaleTimeString('pt-BR', { hour12: false });
-    
+
     const registro = await RegistroPonto.registrarPonto(req.usuario.id, tipo, horario);
     res.json(registro);
   } catch (error) {
-    res.status(400).json({ erro: 'Erro ao registrar ponto' });
+    if (error && error.jaRegistrado && error.campo) {
+      let campo = '';
+      switch (error.campo) {
+        case 'entrada': campo = 'Entrada'; break;
+        case 'saida_almoco': campo = 'Saída Almoço'; break;
+        case 'volta_almoco': campo = 'Volta Almoço'; break;
+        case 'saida': campo = 'Saída'; break;
+        default: campo = error.campo;
+      }
+      res.status(400).json({ erro: `Já há um registro para ${campo} neste dia.` });
+    } else if (error && error.jaRegistrado) {
+      res.status(400).json({ erro: 'Todos os registros já foram preenchidos para hoje.' });
+    } else {
+      res.status(400).json({ erro: 'Erro ao registrar ponto' });
+    }
   }
 });
 

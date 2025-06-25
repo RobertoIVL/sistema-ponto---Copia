@@ -35,18 +35,19 @@
                     </div>
 
                     <div class="botoes-ponto">
-                        <button class="btn-ponto entrada" onclick="registrarPonto('entrada')">
-                            Entrada
-                        </button>
-                        <button class="btn-ponto saida-almoco" onclick="registrarPonto('saida_almoco')">
-                            Saída Almoço
-                        </button>
-                        <button class="btn-ponto volta-almoco" onclick="registrarPonto('volta_almoco')">
-                            Volta Almoço
-                        </button>
-                        <button class="btn-ponto saida" onclick="registrarPonto('saida')">
-                            Saída
-                        </button>
+                       <button class="btn-ponto entrada">Entrada</button>
+                        <button class="btn-ponto saida-almoco">Saída Almoço</button>
+                        <button class="btn-ponto volta-almoco">Volta Almoço</button>
+                        <button class="btn-ponto saida">Saída</button>
+                    </div>
+
+                    <div id="confirmacao-ponto"
+                        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+                        <div style="background:#fff; padding:30px; border-radius:8px; min-width:300px; text-align:center;">
+                            <p id="confirmacao-mensagem">Confirmar ação?</p>
+                            <button id="btn-confirmar" disabled>Confirmar</button>
+                            <button id="btn-cancelar">Cancelar</button>
+                        </div>
                     </div>
 
                     <div class="registros-hoje">

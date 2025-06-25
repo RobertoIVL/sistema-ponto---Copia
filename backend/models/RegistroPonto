@@ -3,13 +3,18 @@ const db = require('../database/database');
 class RegistroPonto {
   static async registrarPonto(usuarioId, tipo, horario) {
     const hoje = new Date().toISOString().split('T')[0];
-    
+
     return new Promise((resolve, reject) => {
-      // Verificar se já existe registro para hoje
       db.get('SELECT * FROM registros_ponto WHERE usuario_id = ? AND data = ?', 
         [usuarioId, hoje], (err, registro) => {
           if (err) {
             reject(err);
+            return;
+          }
+
+          // NOVO: Verifica se todos os campos já estão preenchidos
+          if (registro && registro[tipo]) {
+            reject({ jaRegistrado: true, campo: tipo });
             return;
           }
 
