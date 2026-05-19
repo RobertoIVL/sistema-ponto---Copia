@@ -1,14 +1,9 @@
-import type { Metadata, Viewport } from 'next'
+import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Sistema de Ponto',
   description: 'Sistema de controle de ponto eletrônico',
-}
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
 }
 
 export default function RootLayout({
